@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import os.path
 
 # 禁止ワードのリスト
 banned_words = ["馬鹿", "禁止ワード2", "禁止ワード3"]
@@ -16,13 +17,26 @@ def check_post_content(title, content):
 
 def save_post(title, content):
     post = {"title": title, "content": content}
-    with open('posts.json', 'a') as file:
-        json.dump(post, file)
-        file.write('\n')
+    if not os.path.isfile('posts.json'):
+        with open('posts.json', 'w') as file:
+            json.dump([], file)
+    
+    with open('posts.json', 'r+') as file:
+        posts = json.load(file)
+        posts.append(post)
+        file.seek(0)
+        json.dump(posts, file)
+        file.truncate()
 
 def load_posts():
+    if not os.path.isfile('posts.json'):
+        return []
+    
     with open('posts.json', 'r') as file:
-        return [json.loads(line) for line in file]
+        try:
+            return json.load(file)
+        except json.JSONDecodeError:
+            return []
 
 def main():
     st.title("掲示板アプリ")
