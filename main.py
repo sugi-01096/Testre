@@ -33,10 +33,7 @@ def load_posts():
         return []
     
     with open('posts.json', 'r') as file:
-        try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            return []
+        return json.load(file)
 
 def main():
     st.title("掲示板アプリ")
