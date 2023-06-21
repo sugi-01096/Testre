@@ -1,6 +1,5 @@
 import streamlit as st
 import json
-st.print("Hallo World")
 # 禁止ワードのリスト
 banned_words = ["馬鹿", "禁止ワード2", "禁止ワード3"]
 
