@@ -1,5 +1,9 @@
 import streamlit as st
 import json
+from datetime import datetime
+import pytz
+import urllib.parse
+
 # 禁止ワードのリスト
 banned_words = ["馬鹿", "禁止ワード2", "禁止ワード3"]
 
@@ -14,14 +18,16 @@ def check_post_content(title, content):
     return title, content
 
 def save_post(title, content):
-    post = {"title": title, "content": content}
+    now = datetime.now(pytz.timezone("Asia/Tokyo")).strftime("%Y-%m-%d %H:%M:%S")
+    post = {"title": title, "content": content, "timestamp": now}
     with open('posts.json', 'a') as file:
-        json.dump(post, file)
+        file.write(json.dumps(post))
         file.write('\n')
 
 def load_posts():
     with open('posts.json', 'r') as file:
-        return [json.loads(line) for line in file]
+        lines = file.readlines()
+        return [json.loads(line) for line in lines]
 
 def main():
     st.title("掲示板アプリ")
@@ -48,7 +54,7 @@ def main():
     else:
         for post in posts:
             # 各タイトルにリンクを付けて表示
-            post_url = f"[{post['title']}](#{post['title']})"
+            post_url = f"<a href='https://sugi-01096-aaa-index-htmlmain-b7kpik.streamlit.com/{urllib.parse.quote(post['title'])}'>{post['title']}</a>"
             st.markdown(post_url, unsafe_allow_html=True)
             st.write(post['content'])
             st.markdown("---")
